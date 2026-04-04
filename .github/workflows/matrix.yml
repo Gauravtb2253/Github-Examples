@@ -1,0 +1,35 @@
+name: Matrix Advanced
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [16, 18]
+        include:
+          - os: ubuntu-latest
+            node: 20
+            experimental: true
+        exclude:
+          - os: windows-latest
+            node: 16
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conditional run
+        if: ${{ !matrix.experimental }}
+        run: echo "Stable job"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('package-lock.json') }}
+
+      - run: echo "OS=${{ runner.os }} Node=${{ matrix.node }}"
