@@ -1,0 +1,31 @@
+name: Artifacts and Summary
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: mkdir output && echo "data" > output/file.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact
+          path: output/
+          retention-days: 5
+
+      - run: |
+          echo "## Report" >> $GITHUB_STEP_SUMMARY
+          echo "- Build done" >> $GITHUB_STEP_SUMMARY
+
+  consume:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: my-artifact
+
+      - run: cat output/file.txt
