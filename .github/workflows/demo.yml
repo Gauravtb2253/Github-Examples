@@ -1,0 +1,33 @@
+name: GitHub Actions Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  demonstration-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variables and Log Messages
+        id: step_one
+        run: |
+          # 1. Set an environment variable for subsequent steps
+          echo "MY_ENV_VAR=HelloFromEnv" >> $GITHUB_ENV
+          
+          # 2. Set an output for other steps to reference
+          echo "MY_OUTPUT_VAL=HelloFromOutput" >> $GITHUB_OUTPUT
+          
+          # 3. Log a warning (appears in the UI and annotations)
+          echo "::warning::This is a custom warning message"
+          
+          # 4. Log an error (marks the step with a failure icon, but continues unless exit 1)
+          echo "::error::This is a custom error message"
+
+      - name: Verify Environment Variable
+        run: |
+          # Accessing the variable set in the previous step via $GITHUB_ENV
+          echo "The env var is: $MY_ENV_VAR"
+
+      - name: Verify Step Output
+        run: |
+          # Accessing the output via the steps context and the ID 'step_one'
+          echo "The output value was: ${{ steps.step_one.outputs.MY_OUTPUT_VAL }}"
